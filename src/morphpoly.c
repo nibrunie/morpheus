@@ -136,8 +136,43 @@ void morph_poly_mult(morph_poly_t* result, morph_poly_t* op0, morph_poly_t* op1)
   }
 }
 
+int morph_poly_coeff_is_set(morph_poly_t* poly, int index) 
+{
+  assert(poly->degree > index);
+  return poly->coeff_array(index) != 0;
+}
+
+void morph_poly_copy(morph_poly_t* result, morph_poly_t* op) {
+  if (result == op) return;
+
+  morph_poly_realloc_coeff_array(result, op->degree);
+
+  int i;
+  for (i = 0; i < op->degree; ++i) result->coeff_array[i] = op->coeff_array[i];
+  for (; i < result->degree; ++i) morph_poly_set_coeff_ui(result, i, 0);
+}
+
 void morph_poly_mod(morph_poly_t* result, morph_poly_t* op, morph_poly_t* mod)
 {
+  // most significant coeff
+  int mod_msc = 0;
+  for (int i = 0; i < mod->degree; ++i) if (morph_poly_coeff_is_set(mod, i)) mod_msc = i;
 
+  morph_poly_copy(result, op);
+
+  // FIXME: check, coef for mod_msc of mod MUST be 1
+  for (int d = op->degree - 1; d >= mod_msc; --d) {
+    if (morph_poly_coeff_is_set(result, d)) {
+      int64_t divisor = result->coeff_array[d];
+
+      
+      for (j = 0; j <= mod_msc; j++) {
+        int64_t new_coeff = result->coeff_array[d-j] + divisor * mod->coeff_array[mod_msc-j]
+        new_coeff %= result->state->q;
+        result->coeff_array[d-j] = new_coeff;
+      }
+      assert(!morph_poly_coeff_is_set(result, d));
+    }
+  }
 }
 
