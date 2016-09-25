@@ -1,27 +1,6 @@
-#include <gmp.h>
 
+#include "morphtypes.h"
 
-typedef struct {
-  /** degree of the polynomial mod ring */
-  int n;
-
-  /** prime used to build Z_q, field for coefficients */
-  int q;
-} morph_state_t;
-
-typedef struct {
-  mpz_t* coeff_array;
-  int degree;
-} morph_poly_t;
-
-typedef struct {
-  morph_poly_t poly_array;
-  int size;
-} morph_cipher_t;
-
-typedef struct {
-  morph_poly_t secret_key;
-} morph_secret_t;
 
 /** Encode a message from a 32-bit unsigned integer to a polynomial
  * @param message data to be encoded
