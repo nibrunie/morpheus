@@ -28,3 +28,5 @@ void morph_poly_sample(morph_random_distrib_t distrib, morph_poly_t* result);
 void morph_poly_set_coeff_ui(morph_poly_t* poly, int index, uint32_t value);
 
 uint32_t morph_poly_get_coeff_ui(morph_poly_t* poly, int index);
+
+void morph_poly_scale_ui(morph_poly_t* result, morph_poly_t* op, uint32_t scale);

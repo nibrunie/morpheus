@@ -176,3 +176,24 @@ void morph_poly_mod(morph_poly_t* result, morph_poly_t* op, morph_poly_t* mod)
   }
 }
 
+void morph_poly_sample(morph_random_distrib_t distrib, morph_poly_t* result, int degree)
+{
+  morph_poly_realloc_coeff_array(result, degree);
+
+  for (i = 0; i < degree; ++i) {
+    result->coeff_array[i] = morph_distrib_sample_i32(distrib);
+  }
+}
+
+void morph_poly_scale_ui(morph_poly_t* result, morph_poly_t* op, uint32_t scale)
+{
+  morph_poly_realloc_coeff_array(result, op->degree);
+
+  int i;
+  for (i = 0; i < op->degree; ++i) {
+    int64_t value = op->coeff_array[i] * (int64_t) scale;
+    result->coeff_array[i] = value % result->state->q; 
+  }
+  for (; i < result->degree; ++i) morph_poly_set_coeff_ui(result, i, 0);
+
+}

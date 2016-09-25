@@ -17,11 +17,17 @@ typedef struct {
 } morph_poly_t;
 
 typedef struct {
-  morph_poly_t poly_array;
+  morph_poly_t* poly_array;
   int size;
 } morph_cipher_t;
 
 typedef struct {
-  morph_poly_t secret_key;
+  morph_poly_t secret_s;
+
+  morph_random_distrib_t distrib_e;
+
+  morph_random_distrib_t distrib_a;
+
+  morph_state_t state;
 } morph_secret_t;
 

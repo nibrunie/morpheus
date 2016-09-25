@@ -23,7 +23,7 @@ uint32_t morph_decode_u32(morph_state_t* state, morph_poly_t* coded_message);
  *  @param secret Morpheus secret used to process the encryption 
  *  @return 0 if success, non-zero error code otherwise
  */
-int morph_encrypt(morph_secret_t* secret, morph_poly_t* ciphertext, morph_poly_t* plaintext);
+int morph_encrypt(morph_secret_t* secret, morph_cipher_t* ciphertext, morph_poly_t* plaintext);
 
 /** Decrypt @p plaintext from @p ciphertext
  *  @param ciphertext encrypted data to be decrypted
@@ -31,7 +31,7 @@ int morph_encrypt(morph_secret_t* secret, morph_poly_t* ciphertext, morph_poly_t
  *  @param secret Morpheus secret used to process the encryption 
  *  @return 0 if success, non-zero error code otherwise
  */
-int morph_decrypt(morph_secret_t* secret, morph_poly_t* plaintext, morph_poly_t* ciphertext);
+int morph_decrypt(morph_secret_t* secret, morph_poly_t* plaintext, morph_cipher_t* ciphertext);
 
 /** Perform homomorphic addition (Ring addition) on ciphertexts
   * @param state Morpheus state used to process the homomorphic operation
@@ -48,3 +48,8 @@ int morph_homomorphic_add(morph_state_t* state, morph_cipher_t* op0, morph_ciphe
   * @return error code, 0 on success, non-zero otherwise
   */
 int morph_homomorphic_mult(morph_state_t* state, morph_cipher_t* op0, morph_cipher_t* op1);
+
+morph_cipher_t* morph_cipher_new(int size);
+
+void  morph_cipher_realloc(morph_cipher_t* cipher, int size);
+
