@@ -46,8 +46,8 @@ void morph_poly_free(morph_poly_t* poly)
 
 void morph_poly_realloc_coeff_array(morph_poly_t* poly, int degree) 
 {
-  if (poly->degree >= degree) {
-    for (int i = 0; i < poly->degree; ++i) {
+  if (poly->degree > degree) {
+    for (int i = degree; i < poly->degree; ++i) {
       morph_poly_set_coeff_ui(poly, i, 0);
     }
   } else {
@@ -178,7 +178,7 @@ void morph_poly_mod(morph_poly_t* result, morph_poly_t* op, morph_poly_t* mod)
 
       
       for (int j = 0; j <= mod_msc; j++) {
-        int64_t new_coeff = result->coeff_array[d-j] + divisor * mod->coeff_array[mod_msc-j];
+        int64_t new_coeff = result->coeff_array[d-j] - divisor * mod->coeff_array[mod_msc-j];
         new_coeff %= result->state->q;
         result->coeff_array[d-j] = new_coeff;
       }
@@ -193,6 +193,7 @@ void morph_poly_sample(morph_random_distrib_t distrib, morph_poly_t* result, int
 
   for (int i = 0; i < degree; ++i) {
     result->coeff_array[i] = morph_distrib_sample_i32(distrib);
+    result->coeff_array[i] %= result->state->q;
   }
 }
 
@@ -207,4 +208,9 @@ void morph_poly_scale_ui(morph_poly_t* result, morph_poly_t* op, uint32_t scale)
   }
   for (; i < result->degree; ++i) morph_poly_set_coeff_ui(result, i, 0);
 
+}
+
+void morph_poly_coeffs_mod_ui(morph_poly_t* poly, uint32_t mod)
+{
+  for (int i = 0; i < poly->degree; ++i) poly->coeff_array[i] %= mod;
 }

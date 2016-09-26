@@ -39,7 +39,7 @@ int morph_decrypt(morph_secret_t* secret, morph_poly_t* plaintext, morph_cipher_
   * @param op1 second operand
   * @return error code, 0 on success, non-zero otherwise
   */
-int morph_homomorphic_add(morph_state_t* state, morph_cipher_t* op0, morph_cipher_t* op1);
+int morph_homomorphic_add(morph_state_t* state, morph_cipher_t* result, morph_cipher_t* op0, morph_cipher_t* op1);
 
 /** Perform homomorphic multiplication (Ring multiplication) on ciphertexts
   * @param state Morpheus state used to process the homomorphic operation
@@ -47,7 +47,7 @@ int morph_homomorphic_add(morph_state_t* state, morph_cipher_t* op0, morph_ciphe
   * @param op1 second operand
   * @return error code, 0 on success, non-zero otherwise
   */
-int morph_homomorphic_mult(morph_state_t* state, morph_cipher_t* op0, morph_cipher_t* op1);
+int morph_homomorphic_mult(morph_state_t* state, morph_cipher_t* result, morph_cipher_t* op0, morph_cipher_t* op1);
 
 morph_cipher_t* morph_cipher_new(int size);
 

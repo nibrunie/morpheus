@@ -3,6 +3,7 @@
 
 #include "morphcode.h"
 #include "morphpoly.h"
+#include "morphdebug.h"
 
 
 morph_cipher_t* morph_cipher_new(int size)
@@ -65,6 +66,7 @@ int morph_encrypt(morph_secret_t* secret, morph_cipher_t* ciphertext, morph_poly
   morph_poly_sample(secret->distrib_e, secret_e, n);
   morph_poly_scale_ui(secret_e, secret_e, 2);
 
+
   morph_poly_t*  c1 = morph_poly_new(secret->state, n); 
 
   morph_poly_mult(c1, secret->secret_s, public_a);
@@ -103,9 +105,25 @@ int morph_decrypt(morph_secret_t* secret, morph_poly_t* plaintext, morph_cipher_
     mult_s_c = exch;
   }
 
+  morph_poly_coeffs_mod_ui(plaintext, 2);
+
   return 0;
 }
 
-int morph_homomorphic_add(morph_state_t* state, morph_cipher_t* op0, morph_cipher_t* op1);
+int morph_homomorphic_add(morph_state_t* state, morph_cipher_t* result, morph_cipher_t* op0, morph_cipher_t* op1)
+{
+  int max_size = op0->size > op1->size ? op0->size : op1->size;
 
-int morph_homomorphic_mult(morph_state_t* state, morph_cipher_t* op0, morph_cipher_t* op1);
+  morph_cipher_realloc(result, max_size);
+  for (int i = 0; i < max_size; ++i) {
+    if (!result->poly_array[i]) result->poly_array[i] = morph_poly_new(state, state->n);
+
+    if (i >= op0->size) morph_poly_copy(result->poly_array[i], op1->poly_array[i]);
+    else if (i >= op1->size) morph_poly_copy(result->poly_array[i], op0->poly_array[i]);
+    else morph_poly_add(result->poly_array[i], op0->poly_array[i], op1->poly_array[i]);
+  }
+
+  return 0;
+}
+
+int morph_homomorphic_mult(morph_state_t* state, morph_cipher_t* result, morph_cipher_t* op0, morph_cipher_t* op1);

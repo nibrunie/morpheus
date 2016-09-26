@@ -7,6 +7,8 @@
  */
 morph_poly_t*  morph_poly_new(morph_state_t* state, int degree);
 
+void morph_poly_copy(morph_poly_t* result, morph_poly_t* op);
+
 void morph_poly_free_coeff_array(morph_poly_t* poly); 
 
 void morph_poly_free(morph_poly_t* poly);
@@ -30,3 +32,5 @@ void morph_poly_set_coeff_ui(morph_poly_t* poly, int index, uint32_t value);
 uint32_t morph_poly_get_coeff_ui(morph_poly_t* poly, int index);
 
 void morph_poly_scale_ui(morph_poly_t* result, morph_poly_t* op, uint32_t scale);
+
+void morph_poly_coeffs_mod_ui(morph_poly_t* poly, uint32_t mod);
