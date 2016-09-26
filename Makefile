@@ -19,7 +19,7 @@ clean:
 
 define gen_test_rule
 $(1): test/$(1).o $(LIBOBJECT)
-	$(CC) $(CFLAGS) tests/$(1).o -o $(1) $(LIBOBJECT)
+	$(CC) $(CFLAGS) test/$(1).o -o $(1) $(LIBOBJECT)
 
 test: $(1)
 	./$(1)

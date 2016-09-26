@@ -83,10 +83,12 @@ void morph_poly_add(morph_poly_t* result, morph_poly_t* op0, morph_poly_t* op1)
 
   int i = 0;
   for (i = 0; i < max_degree; ++i) {
-    int32_t c0 = 0, c1 = 0;
+    int64_t c0 = 0, c1 = 0;
     if (i < op0->degree) c0 = op0->coeff_array[i];
     if (i < op1->degree) c1 = op1->coeff_array[i];
-    result->coeff_array[i] = c0 + c1;
+    int64_t value = c0 + c1;
+    value %= result->state->q;
+    result->coeff_array[i] = value;
   }
   for (; i < result->degree; ++i) morph_poly_set_coeff_ui(result, i, 0);
 }
@@ -100,10 +102,12 @@ void morph_poly_sub(morph_poly_t* result, morph_poly_t* op0, morph_poly_t* op1)
 
   int i;
   for (i = 0; i < max_degree; ++i) {
-    int32_t c0 = 0, c1 = 0;
+    int64_t c0 = 0, c1 = 0;
     if (i < op0->degree) c0 = op0->coeff_array[i];
     if (i < op1->degree) c1 = op1->coeff_array[i];
-    result->coeff_array[i] = c0 - c1;
+    int64_t value = c0 - c1;
+    value %= result->state->q;
+    result->coeff_array[i] = value;
   }
   for (; i < result->degree; ++i) morph_poly_set_coeff_ui(result, i, 0);
 }
