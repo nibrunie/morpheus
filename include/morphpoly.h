@@ -23,7 +23,7 @@ void morph_poly_mod(morph_poly_t* result, morph_poly_t* op0, morph_poly_t* op1);
 
 void morph_poly_neg(morph_poly_t* result, morph_poly_t* op0);
 
-void morph_poly_sample(morph_random_distrib_t distrib, morph_poly_t* result);
+void morph_poly_sample(morph_random_distrib_t distrib, morph_poly_t* result, int degree);
 
 void morph_poly_set_coeff_ui(morph_poly_t* poly, int index, uint32_t value);
 
