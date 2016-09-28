@@ -45,6 +45,11 @@ void morph_poly_free(morph_poly_t* poly)
   free(poly);
 }
 
+void morph_poly_reset(morph_poly_t* poly)
+{
+  for (int i = 0; i < poly->degree; ++i) morph_poly_set_coeff_ui(poly, i, 0);
+}
+
 void morph_poly_realloc_coeff_array(morph_poly_t* poly, int degree) 
 {
   poly->coeff_array = realloc(poly->coeff_array, sizeof(int32_t) * degree);
@@ -165,7 +170,6 @@ void morph_poly_mod(morph_poly_t* result, morph_poly_t* op, morph_poly_t* mod)
   int mod_msc = 0;
   for (int i = 0; i < mod->degree; ++i) if (morph_poly_coeff_is_set(mod, i)) mod_msc = i;
 
-  printf("mod_msc: %d\n", mod_msc);
 
   morph_poly_copy(result, op);
 

@@ -13,6 +13,11 @@ void morph_poly_free_coeff_array(morph_poly_t* poly);
 
 void morph_poly_free(morph_poly_t* poly);
 
+/** reset all coefficients of @p poly to zero
+ *  @param poly polynomial to be reset
+ */
+void morph_poly_reset(morph_poly_t* poly);
+
 void morph_poly_realloc_coeff_array(morph_poly_t* poly, int degree); 
 
 void morph_poly_add(morph_poly_t* result, morph_poly_t* op0, morph_poly_t* op1);
