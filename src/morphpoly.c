@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <assert.h>
 
 #include "morphpoly.h"
@@ -46,19 +47,14 @@ void morph_poly_free(morph_poly_t* poly)
 
 void morph_poly_realloc_coeff_array(morph_poly_t* poly, int degree) 
 {
-  if (poly->degree > degree) {
-    for (int i = degree; i < poly->degree; ++i) {
-      morph_poly_set_coeff_ui(poly, i, 0);
-    }
-  } else {
-    poly->coeff_array = realloc(poly->coeff_array, sizeof(int32_t) * degree);
+  poly->coeff_array = realloc(poly->coeff_array, sizeof(int32_t) * degree);
 
-    for (int i = poly->degree; i < degree; ++i) {
-      poly->coeff_array[i] = 0;
-    }
-
-    poly->degree = degree;
+  for (int i = poly->degree; i < degree; ++i) {
+    poly->coeff_array[i] = 0;
   }
+
+  poly->degree = degree;
+  
 }
 
 void morph_poly_set_coeff_ui(morph_poly_t* poly, int index, uint32_t value)
@@ -72,7 +68,6 @@ uint32_t morph_poly_get_coeff_ui(morph_poly_t* poly, int index)
   return poly->coeff_array[index];
   //  mpz_get_ui(poly->coeff_array[index]); 
 }
-
 
 void morph_poly_add(morph_poly_t* result, morph_poly_t* op0, morph_poly_t* op1)
 {
@@ -153,7 +148,8 @@ int morph_poly_coeff_is_set(morph_poly_t* poly, int index)
   return poly->coeff_array[index] != 0;
 }
 
-void morph_poly_copy(morph_poly_t* result, morph_poly_t* op) {
+void morph_poly_copy(morph_poly_t* result, morph_poly_t* op) 
+{
   if (result == op) return;
 
   morph_poly_realloc_coeff_array(result, op->degree);
@@ -168,6 +164,8 @@ void morph_poly_mod(morph_poly_t* result, morph_poly_t* op, morph_poly_t* mod)
   // most significant coeff
   int mod_msc = 0;
   for (int i = 0; i < mod->degree; ++i) if (morph_poly_coeff_is_set(mod, i)) mod_msc = i;
+
+  printf("mod_msc: %d\n", mod_msc);
 
   morph_poly_copy(result, op);
 
@@ -185,6 +183,8 @@ void morph_poly_mod(morph_poly_t* result, morph_poly_t* op, morph_poly_t* mod)
       assert(!morph_poly_coeff_is_set(result, d));
     }
   }
+
+  morph_poly_realloc_coeff_array(result, mod_msc);
 }
 
 void morph_poly_sample(morph_random_distrib_t distrib, morph_poly_t* result, int degree)
@@ -212,5 +212,8 @@ void morph_poly_scale_ui(morph_poly_t* result, morph_poly_t* op, uint32_t scale)
 
 void morph_poly_coeffs_mod_ui(morph_poly_t* poly, uint32_t mod)
 {
-  for (int i = 0; i < poly->degree; ++i) poly->coeff_array[i] %= mod;
+  for (int i = 0; i < poly->degree; ++i) {
+    int32_t value = poly->coeff_array[i];
+    poly->coeff_array[i] = (value < 0 ? (value + poly->state->q) : value) % mod;
+  }
 }

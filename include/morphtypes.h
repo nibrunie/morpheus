@@ -5,7 +5,8 @@
 
 struct morph_poly_s;
 
-typedef struct {
+typedef struct 
+{
   /** degree of the polynomial mod ring */
   int n;
 
@@ -13,7 +14,8 @@ typedef struct {
   int q;
   
   struct morph_poly_s* poly_mod;
-} morph_state_t;
+} 
+morph_state_t;
 
 typedef struct morph_poly_s 
 {
