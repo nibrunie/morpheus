@@ -70,8 +70,6 @@ int morph_encrypt(morph_secret_t* secret, morph_cipher_t* ciphertext, morph_poly
   morph_poly_t*  c1 = morph_poly_new(secret->state, n); 
 
   morph_poly_mult(c1, secret->secret_s, public_a);
-  morph_poly_display("public_a: \n", public_a, "\n");
-  morph_poly_display("secret_s * public_a: \n", c1, "\n");
 
   morph_poly_add(c1, c1, secret_e);
 
@@ -100,12 +98,6 @@ int morph_decrypt(morph_secret_t* secret, morph_poly_t* plaintext, morph_cipher_
 
   for (int i = 0; i < ciphertext->size; ++i) {
     morph_poly_mult(mult_s_c, pow_s, ciphertext->poly_array[i]);
-    if (i == 0) {
-      morph_poly_display("dec cipher: \n", ciphertext->poly_array[i], "\n");
-      morph_poly_display("dec * cipher: \n", mult_s_c, "\n");
-    }
-      
-    if (i == 1) morph_poly_display("dec secret_s * public_a: \n", mult_s_c, "\n");
     morph_poly_add(plaintext, mult_s_c, plaintext);
     morph_poly_mult(mult_s_c, pow_s, secret->secret_s);
     morph_poly_mod(plaintext, plaintext, plaintext->state->poly_mod); 
@@ -113,10 +105,8 @@ int morph_decrypt(morph_secret_t* secret, morph_poly_t* plaintext, morph_cipher_
     pow_s = mult_s_c;
     mult_s_c = exch;
   }
-  morph_poly_display("decrypted plaintext: \n", plaintext, "\n");
 
   morph_poly_coeffs_mod_ui(plaintext, 2);
-  morph_poly_display("decrypted plaintext mod: \n", plaintext, "\n");
 
   morph_poly_free(pow_s);
   morph_poly_free(mult_s_c);
@@ -140,4 +130,27 @@ int morph_homomorphic_add(morph_state_t* state, morph_cipher_t* result, morph_ci
   return 0;
 }
 
-int morph_homomorphic_mult(morph_state_t* state, morph_cipher_t* result, morph_cipher_t* op0, morph_cipher_t* op1);
+int morph_homomorphic_mult(morph_state_t* state, morph_cipher_t* result, morph_cipher_t* op0, morph_cipher_t* op1)
+{
+  assert(result != op0 && result != op1 && "inplace not supported in cipher mult");
+
+  int result_size = op0->size + op1->size - 1;
+
+  morph_cipher_realloc(result, result_size);
+  for (int i = 0; i < result_size; ++i) {
+    if (result->poly_array[i]) morph_poly_reset(result->poly_array[i]);
+    else result->poly_array[i] = morph_poly_new(state, state->n);
+  }
+
+  // temporary multiplication result
+  morph_poly_t* tmp = morph_poly_new(state, state->n);
+
+  for (int i = 0; i < op0->size; ++i) {
+    for (int j = 0; j < op1->size; ++j) {
+      morph_poly_mult(tmp, op0->poly_array[i], op1->poly_array[j]);
+      morph_poly_add(result->poly_array[i+j], result->poly_array[i+j], tmp);
+    }
+  }
+
+  return 0;
+}
