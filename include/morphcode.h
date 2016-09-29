@@ -53,3 +53,4 @@ morph_cipher_t* morph_cipher_new(int size);
 
 void  morph_cipher_realloc(morph_cipher_t* cipher, int size);
 
+void morph_cipher_display(char* title, morph_cipher_t* cipher, char* footer);
