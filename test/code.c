@@ -21,8 +21,9 @@ int main() {
   morph_poly_t* a, *b, *c;
 
   morph_state_t state;
-  state.n = 256;
-  state.q = 7681;
+  state.n = 64;
+  //state.q = 7681;
+  state.q = 16760833;
   state.poly_mod = morph_poly_new(NULL, state.n+1);
   morph_poly_set_coeff_ui(state.poly_mod, 0, 1);
   morph_poly_set_coeff_ui(state.poly_mod, state.n, 1);
@@ -33,12 +34,13 @@ int main() {
   c = morph_poly_new(&state, state.n);
 
   uint32_t ua = rand(), ub = rand();
+  //uint32_t ua = 0xf, ub = 0x2;
 
   morph_encode_u32(&state, a, ua);
   morph_encode_u32(&state, b, ub);
 
   morph_random_distrib_t uni_distrib = {.type = DISTRIB_UNIFORM, .uniform = {.lower = 0, .upper = state.q}};
-  morph_random_distrib_t distrib_e = {.type = DISTRIB_UNIFORM, .uniform = {.lower = 1, .upper = 1}};
+  morph_random_distrib_t distrib_e = {.type = DISTRIB_UNIFORM, .uniform = {.lower = 0, .upper = 16}};
 
   morph_secret_t _secret;
   morph_secret_t* secret =  &_secret;
@@ -71,37 +73,40 @@ int main() {
   printf("homomorphic addition of a + b\n");
   morph_homomorphic_add(&state, cc, ca, cb);
 
+  printf("decrypting b\n");
+  morph_decrypt(secret, decb, cb);
+  printf("decrypting add\n");
+  morph_decrypt(secret, decc, cc);
+
+  uint32_t da = morph_decode_u32(&state, deca);
+  printf("ua = %"PRIx32" => da=%"PRIx32" \n", ua, da);
+  assert(ua == da && "encode/decode failed");
+
+  uint32_t db = morph_decode_u32(&state, decb);
+  printf("ub = %"PRIx32" => db=%"PRIx32" \n", ub, db);
+  assert(ub == db && "encode/decode failed");
+
+  uint32_t dc = morph_decode_u32(&state, decc);
+  printf("homomorphic ua ^ ub = %"PRIx32" vs %"PRIx32" \n", dc, ua ^ ub);
+  assert(dc == (ua ^ ub) && "homomorphic add failed");
+
   printf("homomorphic multiplication of a * b\n");
   morph_homomorphic_mult(&state, cm, ca, cb);
 
   morph_cipher_display("cipher for a: \n", ca, "\n");
   morph_cipher_display("cipher for b: \n", cb, "\n");
   morph_cipher_display("cipher for mul: \n", cm, "\n");
-
-  printf("decrypting b\n");
-  morph_decrypt(secret, decb, cb);
-  printf("decrypting add\n");
-  morph_decrypt(secret, decc, cc);
   printf("decrypting mul\n");
   morph_decrypt(secret, decm, cm);
-
-  uint32_t da = morph_decode_u32(&state, deca);
-  uint32_t db = morph_decode_u32(&state, decb);
-  uint32_t dc = morph_decode_u32(&state, decc);
   uint32_t dm = morph_decode_u32(&state, decm);
 
-  printf("ua = %"PRIx32" => da=%"PRIx32" \n", ua, da);
-  assert(ua == da && "encode/decode failed");
 
-  printf("ub = %"PRIx32" => db=%"PRIx32" \n", ub, db);
-  assert(ub == db && "encode/decode failed");
 
-  printf("homomorphic ua ^ ub = %"PRIx32" vs %"PRIx32" \n", dc, ua ^ ub);
-  assert(dc == (ua ^ ub) && "homomorphic add failed");
 
   uint32_t emul_dm = emul_poly_mul(ua, ub);
 
   printf("homomorphic ua x ub = %"PRIx32" vs %"PRIx32" \n", dm, emul_dm);
+  assert(dm == emul_dm && "homomorphic multiplication failed");
 
 
 

@@ -17,6 +17,7 @@ typedef struct
 } 
 morph_state_t;
 
+
 typedef struct morph_poly_s 
 {
   int32_t* coeff_array;
@@ -53,6 +54,21 @@ typedef struct {
   morph_distrib_type_t type;
 } 
 morph_random_distrib_t;
+
+typedef struct {
+  int m;
+
+  /** number of polynomial in each z_i */
+  int D;
+
+  /** array of m (z_i,0 ... z_i,D) element */
+  morph_cipher_t** z_array;
+} morph_recrypt_pk_t;
+
+typedef struct {
+  int l;
+  int* sparse_index_array;
+} morph_recrypt_sk_t;
 
 typedef struct {
   morph_poly_t* secret_s;

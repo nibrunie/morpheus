@@ -49,6 +49,14 @@ int morph_homomorphic_add(morph_state_t* state, morph_cipher_t* result, morph_ci
   */
 int morph_homomorphic_mult(morph_state_t* state, morph_cipher_t* result, morph_cipher_t* op0, morph_cipher_t* op1);
 
+
+/** Squash the input cipher text into a reduced cipher text
+ *  to provide full homomorphic capabilities from somewhat homomorphic capabilities
+ */
+int morph_homomorphic_recrypt(morph_state_t* state, morph_cipher_t* result, morph_cipher_t* op);
+
+int morph_generate_recrypt(morph_recrypt_pk_t* pk, morph_recrypt_sk_t* sk, morph_secret_t* secret, int m, int l, int D);
+
 morph_cipher_t* morph_cipher_new(int size);
 
 void  morph_cipher_realloc(morph_cipher_t* cipher, int size);

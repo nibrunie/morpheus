@@ -65,7 +65,7 @@ int morph_encrypt(morph_secret_t* secret, morph_cipher_t* ciphertext, morph_poly
   morph_poly_t* secret_e = morph_poly_new(secret->state, n);
   morph_poly_sample(secret->distrib_e, secret_e, n);
   // limiting error to an 8-th of coefficient
-  for (int i = n / 8; i < n; ++i) morph_poly_set_coeff_ui(secret_e, i, 0);
+  // for (int i = n / 8; i < n; ++i) morph_poly_set_coeff_ui(secret_e, i, 0);
   morph_poly_scale_ui(secret_e, secret_e, 2);
   morph_poly_display("secret_e \n", secret_e, "\n");
   morph_poly_display("public_a \n", public_a, "\n");
@@ -110,6 +110,7 @@ int morph_decrypt(morph_secret_t* secret, morph_poly_t* plaintext, morph_cipher_
     mult_s_c = exch;
   }
 
+  morph_poly_display("plaintext pre mod 2: \n", plaintext, "\n");
   morph_poly_coeffs_mod_ui(plaintext, 2);
   morph_poly_display("plaintext: \n", plaintext, "\n");
 
@@ -160,6 +161,62 @@ int morph_homomorphic_mult(morph_state_t* state, morph_cipher_t* result, morph_c
   return 0;
 }
 
+#if 0
+int morph_homomorphic_recrypt(morph_state_t* state, morph_cipher_t* result, morph_cipher_t* op)
+{
+
+}
+
+int morph_generate_recrypt(morph_recrypt_pk_t* pk, morph_recrypt_sk_t* sk, morph_secret_t* secret, int m, int l, int D)
+{
+  pk->m = m;
+  pk->D = D;
+  pk->z_array = malloc(sizeof(morph_cipher_t*) * m);
+
+  sk->l = l;
+  sk->sparse_index_array = malloc(sizeof(int) * l);
+  morph_poly_t** s_pow_array = malloc(sizeof(morph_poly_t*) * (D+1));
+
+  /** Computing the power of the secret polynomial */ 
+  s_pow_array[0] = morph_poly_new(state, 1);
+  morph_poly_set_coeff_ui(s_pow_array[0], 0, 1);
+
+  for (int i = 1; i < l; ++i) {
+    s_pow_array[i] = morph_poly_new(state, state->n);
+    morph_poly_mult(s_pow_array[i], s_pow_array[i-1], secret->secret_s);
+  }
+
+  /** hiding the power within the sparse subset */
+  sk->sparse_index_array[0] = rand() % (m / l);
+  for (int i = 1; i < l; ++i) {
+    int new_index = i * (m / l) + rand() % (m / l);
+    assert(new_index != sk->sparse_index_array[i-1] && new_index < m);
+    sk->sparse_index_array[i] = new_index;
+  }
+  for (int i = 0; i < m; ++i)
+  {
+    pk->z_array[i] = morph_cipher_new(D+1);
+    for (int j = 0; j < D+1; ++j) {
+      pk->z_array[i]->poly_array[j] = morph_poly_new(secret->state, secret->state->n);
+      morph_poly_sample(secret->distrib_e, pk->z_array[i]->poly_array[j], secret->state->n);
+    }
+  }
+  // last vector to fix the sum
+  for (int i = 0; i < l - 1; ++i) {
+    int z_index = sk->sparse_index_array[i];
+    for (int j = 0; j < D+1; ++j) {
+      morph_poly_sub(s_pow_array[j], s_pow_array[j], pk->z_array[z_index]->poly_array[j]);
+    }
+  }
+  int z_index = sk->sparse_index_array[l-1];
+  for (int j = 0; j < D+1; ++j) {
+    morph_poly_copy(pk->z_array[z_index]->poly_array[j], s_pow_array[j]);
+  }
+
+  // FIXME free tmp polynomials
+  for (int i = 0; i < l; ++i) morph_poly_free(s_pow_array[i]);
+}
+#endif
 void morph_cipher_display(char* title, morph_cipher_t* cipher, char* footer)
 {
   printf("%s", title);

@@ -176,7 +176,7 @@ void morph_poly_mod(morph_poly_t* result, morph_poly_t* op, morph_poly_t* mod)
   // FIXME: check, coef for mod_msc of mod MUST be 1
   for (int d = op->degree - 1; d >= mod_msc; --d) {
     if (morph_poly_coeff_is_set(result, d)) {
-      int64_t divisor = result->state->q - result->coeff_array[d];
+      int64_t divisor = - result->coeff_array[d];
 
       
       for (int j = 0; j <= mod_msc; j++) {
@@ -218,6 +218,15 @@ void morph_poly_coeffs_mod_ui(morph_poly_t* poly, uint32_t mod)
 {
   for (int i = 0; i < poly->degree; ++i) {
     int32_t value = poly->coeff_array[i];
-    poly->coeff_array[i] = (value < 0 ? (value + poly->state->q) : value) % mod;
+    // coefficient is small (else decryption fails)
+    // so we mod it accordingly (supposing it is small but may have shifted
+    // by state->q
+    // as reduction is done by x^n + 1 in the polynomial ring,
+    // small negative coeff (neg coeff whose abs value is small)
+    // should be negated before being mod
+    if (value < - poly->state->q / 2) poly->coeff_array[i] = (value + poly->state->q) % mod;
+    else if (value > poly->state->q / 2) poly->coeff_array[i] = 1 - ((value) % mod);
+    else if (value < 0) poly->coeff_array[i] = (-value) % mod;
+    else poly->coeff_array[i] = value % mod;
   }
 }
