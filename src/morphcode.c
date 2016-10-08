@@ -64,11 +64,7 @@ int morph_encrypt(morph_secret_t* secret, morph_cipher_t* ciphertext, morph_poly
 
   morph_poly_t* secret_e = morph_poly_new(secret->state, n);
   morph_poly_sample(secret->distrib_e, secret_e, n);
-  // limiting error to an 8-th of coefficient
-  // for (int i = n / 8; i < n; ++i) morph_poly_set_coeff_ui(secret_e, i, 0);
   morph_poly_scale_ui(secret_e, secret_e, 2);
-  morph_poly_display("secret_e \n", secret_e, "\n");
-  morph_poly_display("public_a \n", public_a, "\n");
 
 
   morph_poly_t*  c1 = morph_poly_new(secret->state, n); 
@@ -110,9 +106,7 @@ int morph_decrypt(morph_secret_t* secret, morph_poly_t* plaintext, morph_cipher_
     mult_s_c = exch;
   }
 
-  morph_poly_display("plaintext pre mod 2: \n", plaintext, "\n");
   morph_poly_coeffs_mod_ui(plaintext, 2);
-  morph_poly_display("plaintext: \n", plaintext, "\n");
 
   morph_poly_free(pow_s);
   morph_poly_free(mult_s_c);

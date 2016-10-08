@@ -46,7 +46,6 @@ int main() {
   morph_secret_t* secret =  &_secret;
   secret->secret_s = morph_poly_new(&state, state.n);
   morph_poly_sample(uni_distrib, secret->secret_s, state.n);
-  morph_poly_display("secret_s:\n", secret->secret_s, "\n");
 
   secret->distrib_a = uni_distrib;
   secret->distrib_e = distrib_e;
@@ -93,9 +92,6 @@ int main() {
   printf("homomorphic multiplication of a * b\n");
   morph_homomorphic_mult(&state, cm, ca, cb);
 
-  morph_cipher_display("cipher for a: \n", ca, "\n");
-  morph_cipher_display("cipher for b: \n", cb, "\n");
-  morph_cipher_display("cipher for mul: \n", cm, "\n");
   printf("decrypting mul\n");
   morph_decrypt(secret, decm, cm);
   uint32_t dm = morph_decode_u32(&state, decm);
