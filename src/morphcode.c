@@ -46,8 +46,9 @@ uint32_t morph_decode_u32(morph_state_t* state, morph_poly_t* coded_message)
   for (int i = 0; i < degree; ++i)
   {
     uint32_t local_value = coded_message->coeff_array[i];//mpz_get_ui(poly->coeff_array[i]);
-    assert(local_value < 2);
-    value |= (local_value << i);
+    assert(local_value <= 1 || local_value >= -1);
+    uint32_t bit_value = (local_value != 0 ? 1 : 0);
+    value |= (bit_value << i);
   }
 
   return value;
@@ -220,3 +221,10 @@ void morph_cipher_display(char* title, morph_cipher_t* cipher, char* footer)
   }
   printf("%s", footer);
 }
+
+/*
+void morph_cipher_switch_modulo(morph_cipher_t* result, morph_cipher_t* op, int new_modulo)
+{
+  morph_cipher_realloc(result, op->size);
+  for (int i = 0; i < op->size; ++i) morph_poly_switch_modulo(result->poly_array[i], op->poly_array[i], new_modulo);
+}*/
