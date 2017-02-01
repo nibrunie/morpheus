@@ -1,2 +1,5 @@
+before_install:
+- sudo apt-get update -qq
+- sudo apt-get install -qq libgmp-dev
 language: c
 script: make && make test
