@@ -170,14 +170,12 @@ void morph_poly_mod(morph_poly_t* result, morph_poly_t* op, morph_poly_t* mod)
   int mod_msc = 0;
   for (int i = 0; i < mod->degree; ++i) if (morph_poly_coeff_is_set(mod, i)) mod_msc = i;
 
-
   morph_poly_copy(result, op);
 
-  // FIXME: check, coef for mod_msc of mod MUST be 1
+  // FIXME: check, coeff for mod_msc of mod MUST be 1
   for (int d = op->degree - 1; d >= mod_msc; --d) {
     if (morph_poly_coeff_is_set(result, d)) {
       int64_t divisor = - result->coeff_array[d];
-
       
       for (int j = 0; j <= mod_msc; j++) {
         int64_t new_coeff = result->coeff_array[d-j] + divisor * mod->coeff_array[mod_msc-j];
