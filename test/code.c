@@ -24,6 +24,7 @@ int main() {
   state.n = 64;
   //state.q = 7681;
   state.q = 16760833;
+  // setting modulo polynomial
   state.poly_mod = morph_poly_new(NULL, state.n+1);
   morph_poly_set_coeff_ui(state.poly_mod, 0, 1);
   morph_poly_set_coeff_ui(state.poly_mod, state.n, 1);
@@ -95,8 +96,6 @@ int main() {
   printf("decrypting mul\n");
   morph_decrypt(secret, decm, cm);
   uint32_t dm = morph_decode_u32(&state, decm);
-
-
 
 
   uint32_t emul_dm = emul_poly_mul(ua, ub);
