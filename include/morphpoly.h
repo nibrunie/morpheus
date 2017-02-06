@@ -1,5 +1,10 @@
 #include "morphtypes.h"
 
+/** \defgroup poly Morpheus Polynomial
+ *  \brief API of primitives for polynomial operations
+ *  @{
+ */
+
 /** Allocate a new polynomial of degree @p degree with all coefficients
  *  equal to zero
  *  @param degree degree of the polynomial to be allocated
@@ -110,3 +115,4 @@ void morph_poly_coeffs_mod_ui(morph_poly_t* poly, uint32_t mod);
  */
 void morph_poly_switch_modulo(morph_poly_t* result, morph_poly_t* op, int new_modulo); 
   
+/** @} */ // End of Doxygen's poly group

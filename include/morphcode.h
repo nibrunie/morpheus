@@ -1,6 +1,12 @@
 
 #include "morphtypes.h"
 
+/** \defgroup code Morpheus Code
+ *  \brief API to implementing homomorphic encryption code: encode/decode
+ *       and basic operations
+ *  @{
+ */
+
 /** Allocate a new cipher
  *  @param size size of the cipher to generate
  *  @return a new cipher object
@@ -78,3 +84,5 @@ void morph_cipher_display(char* title, morph_cipher_t* cipher, char* footer);
  *  @param new_modulo momdulo to switch to
  */
 void morph_cipher_switch_modulo(morph_cipher_t* result, morph_cipher_t* op, int new_modulo);
+
+/** @} */ // End of Doxygen's code group
