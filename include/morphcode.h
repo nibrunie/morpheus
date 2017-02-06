@@ -1,6 +1,11 @@
 
 #include "morphtypes.h"
 
+/** Allocate a new cipher
+ *  @param size size of the cipher to generate
+ *  @return a new cipher object
+ */
+morph_cipher_t* morph_cipher_new(int size);
 
 /** Encode a message from a 32-bit unsigned integer to a polynomial
  * @param message data to be encoded
@@ -57,8 +62,19 @@ int morph_homomorphic_recrypt(morph_state_t* state, morph_cipher_t* result, morp
 
 int morph_generate_recrypt(morph_recrypt_pk_t* pk, morph_recrypt_sk_t* sk, morph_secret_t* secret, int m, int l, int D);
 
-morph_cipher_t* morph_cipher_new(int size);
 
 void  morph_cipher_realloc(morph_cipher_t* cipher, int size);
 
+/** Display a cipher
+ *  @param title text to display before object
+ *  @param cipher cipher object to be displayed
+ *  @param footer text to display after object 
+ */
 void morph_cipher_display(char* title, morph_cipher_t* cipher, char* footer);
+
+/** normalize the given cipher under a new modulo
+ *  @param result operation result
+ *  @param op input cipher
+ *  @param new_modulo momdulo to switch to
+ */
+void morph_cipher_switch_modulo(morph_cipher_t* result, morph_cipher_t* op, int new_modulo);

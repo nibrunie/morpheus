@@ -212,6 +212,7 @@ int morph_generate_recrypt(morph_recrypt_pk_t* pk, morph_recrypt_sk_t* sk, morph
   for (int i = 0; i < l; ++i) morph_poly_free(s_pow_array[i]);
 }
 #endif
+
 void morph_cipher_display(char* title, morph_cipher_t* cipher, char* footer)
 {
   printf("%s", title);
