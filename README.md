@@ -1,4 +1,4 @@
-# morpheus
+# morpheus  [![Build Status](https://travis-ci.org/nibrunie/morpheus.svg?branch=master)](https://travis-ci.org/nibrunie/morpheus)
 
 
 ## Introduction 
