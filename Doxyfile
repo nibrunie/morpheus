@@ -1,0 +1,20 @@
+# Doxyfile 1.8.6
+
+
+DOXYFILE_ENCODING      = UTF-8
+
+
+PROJECT_NAME           = "Morpheus"
+
+PROJECT_NUMBER         = 0
+
+PROJECT_BRIEF          = "Dummy homomorphic encryption library"
+
+OUTPUT_DIRECTORY       = doc
+
+OUTPUT_LANGUAGE        = English
+
+BRIEF_MEMBER_DESC      = YES
+
+INPUT = include/
+
